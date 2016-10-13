@@ -13,10 +13,9 @@ import redis.clients.jedis.ShardedJedisPool;
  */
 public class RedisUtil {
 
-	
 	static List<JedisShardInfo> shardInfoList = Arrays.asList(
-			new JedisShardInfo("192.168.120.33",6379),
-			new JedisShardInfo("192.168.120.33",6379)
+			new JedisShardInfo("http://192.168.120.33:6379/1"),
+			new JedisShardInfo("http://192.168.120.33:6379/1")
 	);
 	private static JedisPoolConfig poolConfig = new JedisPoolConfig();
     private static ShardedJedisPool shardedJedisPool = new ShardedJedisPool(poolConfig, shardInfoList);
@@ -28,15 +27,6 @@ public class RedisUtil {
      * @return
      */
     public static String get(String key){
-    	return shardedJedisPool.getResource().get(key);
-    }
-    
-    /**
-     * 获取
-     * @param key
-     * @return
-     */
-    public static String getMap(String key){
     	return shardedJedisPool.getResource().get(key);
     }
     
