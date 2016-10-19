@@ -1,5 +1,6 @@
 package redies;
 
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -23,17 +24,29 @@ public class RedisUtil {
      * @return
      */
     public static String get(String key){
-    	return jedisPool.getResource().get(key);
+    	Jedis jedis = null;
+    	try {
+    		jedis = jedisPool.getResource();
+			return jedis.get(key);
+		} finally {
+			jedis.close();
+		}
     }
-    
-    /**
+
+	/**
      * 添加
      * @param key
      * @param value
      * @return
      */
     public static boolean set(String key, String value){
-		return "OK".equals(jedisPool.getResource().set(key, value));
+    	Jedis jedis = null;
+    	try {
+    		jedis = jedisPool.getResource();
+    		return "OK".equals(jedis.set(key, value));
+		} finally {
+			jedis.close();
+		}
     }
     
     /**
@@ -43,7 +56,13 @@ public class RedisUtil {
      * @return
      */
     public static boolean del(String key){
-    	return jedisPool.getResource().del(key) > 0;
+    	Jedis jedis = null;
+    	try {
+    		jedis = jedisPool.getResource();
+    		return jedis.del(key) > 0;
+		} finally {
+			jedis.close();
+		}
     }
     
 }
