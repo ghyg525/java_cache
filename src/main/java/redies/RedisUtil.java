@@ -1,11 +1,7 @@
 package redies;
 
-import java.util.Arrays;
-import java.util.List;
-
+import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.JedisShardInfo;
-import redis.clients.jedis.ShardedJedisPool;
 
 /**
  * Redis操作工具类
@@ -13,12 +9,12 @@ import redis.clients.jedis.ShardedJedisPool;
  */
 public class RedisUtil {
 
-	static List<JedisShardInfo> shardInfoList = Arrays.asList(
-			new JedisShardInfo("http://192.168.120.33:6379/1"),
-			new JedisShardInfo("http://192.168.120.33:6379/1")
-	);
-	private static JedisPoolConfig poolConfig = new JedisPoolConfig();
-    private static ShardedJedisPool shardedJedisPool = new ShardedJedisPool(poolConfig, shardInfoList);
+	private static String host = "192.168.125.15";
+	private static int port = 6379;
+	private static int timeout = 10000; // 超时时间(ms)
+	private static String password;
+	private static int database = 1;
+    private static JedisPool jedisPool = new JedisPool(new JedisPoolConfig(), host, port, timeout, password, database);
 
     
     /**
@@ -27,7 +23,7 @@ public class RedisUtil {
      * @return
      */
     public static String get(String key){
-    	return shardedJedisPool.getResource().get(key);
+    	return jedisPool.getResource().get(key);
     }
     
     /**
@@ -37,7 +33,7 @@ public class RedisUtil {
      * @return
      */
     public static boolean set(String key, String value){
-		return "OK".equals(shardedJedisPool.getResource().set(key, value));
+		return "OK".equals(jedisPool.getResource().set(key, value));
     }
     
     /**
@@ -47,7 +43,7 @@ public class RedisUtil {
      * @return
      */
     public static boolean del(String key){
-    	return shardedJedisPool.getResource().del(key) > 0;
+    	return jedisPool.getResource().del(key) > 0;
     }
     
 }
